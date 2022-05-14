@@ -2,7 +2,10 @@ module github.com/SimonTheLeg/semver-tag-on-merge-action
 
 go 1.18
 
-require github.com/go-git/go-git/v5 v5.4.2
+require (
+	github.com/Masterminds/semver/v3 v3.1.1
+	github.com/go-git/go-git/v5 v5.4.2
+)
 
 require (
 	github.com/Microsoft/go-winio v0.4.16 // indirect
