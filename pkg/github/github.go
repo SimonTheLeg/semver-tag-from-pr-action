@@ -55,13 +55,13 @@ func wrapNone(v *semver.Version) semver.Version {
 	return *v
 }
 
-type semVerBump string
+type SemVerBump string
 
 const (
-	major semVerBump = "major"
-	minor semVerBump = "minor"
-	patch semVerBump = "patch"
-	none  semVerBump = "none"
+	major SemVerBump = "major"
+	minor SemVerBump = "minor"
+	patch SemVerBump = "patch"
+	none  SemVerBump = "none"
 )
 
 type NoSemVerLabel struct{}
@@ -72,7 +72,7 @@ func (*NoSemVerLabel) Error() string {
 
 // DetermineSemVerBumpForPR returns a bumping func which can be applied to a semVer Version. It determines the suitable func
 // based on a supplied labelmap. This allows users to configure their own labels that the associate with semVer Bumps
-func DetermineSemVerBumpForPR(pr *gh.PullRequest, labelMap map[string]semVerBump) (func(v *semver.Version) semver.Version, error) {
+func DetermineSemVerBumpForPR(pr *gh.PullRequest, labelMap map[string]SemVerBump) (func(v *semver.Version) semver.Version, error) {
 	for _, label := range pr.Labels {
 
 		lm, ok := labelMap[*label.Name]

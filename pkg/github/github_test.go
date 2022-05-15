@@ -101,7 +101,7 @@ func TestGetPRForCommit2(t *testing.T) {
 
 func TestDetermineSemVerBumpForPR(t *testing.T) {
 	base, _ := semver.NewVersion("v0.0.0")
-	defaultLabelMap := map[string]semVerBump{
+	defaultLabelMap := map[string]SemVerBump{
 		"breaking": major,
 		"feature":  minor,
 		"fix":      patch,
@@ -109,7 +109,7 @@ func TestDetermineSemVerBumpForPR(t *testing.T) {
 	}
 	tt := map[string]struct {
 		pr                  *gh.PullRequest
-		labelMap            map[string]semVerBump
+		labelMap            map[string]SemVerBump
 		expVersionAfterBump string
 		expErr              bool
 	}{
