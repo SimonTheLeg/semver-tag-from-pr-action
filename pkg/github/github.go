@@ -9,7 +9,7 @@ import (
 	gh "github.com/google/go-github/v44/github"
 )
 
-type GitHubRepoClient struct {
+type RepoClient struct {
 	Owner    string
 	RepoName string
 	gh.Client
@@ -17,7 +17,7 @@ type GitHubRepoClient struct {
 
 // GetPRForCommit returns a single PullRequest that was merged and introduces the commit on trunk
 // trunk is required as multiple PRs can introduce the same commit in the repo, and we need to find the one that did it on the trunk
-func (c *GitHubRepoClient) GetPRForCommit(ctx context.Context, commit *gogitplumbing.Hash, trunk string) (*gh.PullRequest, error) {
+func (c *RepoClient) GetPRForCommit(ctx context.Context, commit *gogitplumbing.Hash, trunk string) (*gh.PullRequest, error) {
 	prs, _, err := c.PullRequests.ListPullRequestsWithCommit(ctx, c.Owner, c.RepoName, commit.String(), &gh.PullRequestListOptions{})
 	if err != nil {
 		return nil, err

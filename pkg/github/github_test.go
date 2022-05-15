@@ -72,7 +72,7 @@ func TestGetPRForCommit2(t *testing.T) {
 					tc.inPRs,
 				),
 			)
-			c := GitHubRepoClient{
+			c := RepoClient{
 				Client:   *gh.NewClient(mockc),
 				Owner:    "mock",
 				RepoName: "mock",
