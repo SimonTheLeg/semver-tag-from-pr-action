@@ -58,10 +58,10 @@ func wrapNone(v *semver.Version) semver.Version {
 type SemVerBump string
 
 const (
-	major SemVerBump = "major"
-	minor SemVerBump = "minor"
-	patch SemVerBump = "patch"
-	none  SemVerBump = "none"
+	Major SemVerBump = "major"
+	Minor SemVerBump = "minor"
+	Patch SemVerBump = "patch"
+	None  SemVerBump = "none"
 )
 
 type NoSemVerLabel struct{}
@@ -82,13 +82,13 @@ func DetermineSemVerBumpForPR(pr *gh.PullRequest, labelMap map[string]SemVerBump
 		}
 
 		switch lm {
-		case major:
+		case Major:
 			return wrapMajor, nil
-		case minor:
+		case Minor:
 			return wrapMinor, nil
-		case patch:
+		case Patch:
 			return wrapPatch, nil
-		case none:
+		case None:
 			return wrapNone, nil
 		}
 	}
