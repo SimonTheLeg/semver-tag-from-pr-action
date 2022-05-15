@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Masterminds/semver/v3"
 	gogitplumbing "github.com/go-git/go-git/v5/plumbing"
 	gh "github.com/google/go-github/v44/github"
 )
@@ -38,3 +39,58 @@ func (c *GitHubRepoClient) GetPRForCommit(ctx context.Context, commit *gogitplum
 	return desiredPR, nil
 }
 
+func wrapMajor(v *semver.Version) semver.Version {
+	return v.IncMajor()
+}
+
+func wrapMinor(v *semver.Version) semver.Version {
+	return v.IncMinor()
+}
+
+func wrapPatch(v *semver.Version) semver.Version {
+	return v.IncPatch()
+}
+
+func wrapNone(v *semver.Version) semver.Version {
+	return *v
+}
+
+type semVerBump string
+
+const (
+	major semVerBump = "major"
+	minor semVerBump = "minor"
+	patch semVerBump = "patch"
+	none  semVerBump = "none"
+)
+
+type NoSemVerLabel struct{}
+
+func (*NoSemVerLabel) Error() string {
+	return "no GitHub label was found which matches any of the semVer Bump labels"
+}
+
+// DetermineSemVerBumpForPR returns a bumping func which can be applied to a semVer Version. It determines the suitable func
+// based on a supplied labelmap. This allows users to configure their own labels that the associate with semVer Bumps
+func DetermineSemVerBumpForPR(pr *gh.PullRequest, labelMap map[string]semVerBump) (func(v *semver.Version) semver.Version, error) {
+	for _, label := range pr.Labels {
+
+		lm, ok := labelMap[*label.Name]
+		// if label does not match supplied map, skip it
+		if !ok {
+			continue
+		}
+
+		switch lm {
+		case major:
+			return wrapMajor, nil
+		case minor:
+			return wrapMinor, nil
+		case patch:
+			return wrapPatch, nil
+		case none:
+			return wrapNone, nil
+		}
+	}
+	return nil, &NoSemVerLabel{}
+}
