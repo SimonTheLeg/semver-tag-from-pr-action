@@ -1,0 +1,4 @@
+.git
+
+# ignore Go binary
+semver-tag-on-merge-action
