@@ -9,9 +9,12 @@ import (
 )
 
 func main() {
-	conf := &config.Config{}
+	conf, err := config.ConfigInsideActions()
+	if err != nil {
+		errExit(err)
+	}
 
-	err := cmd.Run(conf)
+	err = cmd.Run(conf)
 	if err != nil {
 		errExit(err)
 	}
