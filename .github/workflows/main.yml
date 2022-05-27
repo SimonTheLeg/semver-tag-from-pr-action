@@ -1,0 +1,12 @@
+on: [push]
+
+jobs:
+  semver_tag_on_merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: test action
+        id: test
+        uses: simontheleg/semver-tag-on-merge-action@gh-action
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

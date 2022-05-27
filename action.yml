@@ -1,0 +1,32 @@
+name: SemVer Tag On Merge
+inputs:
+  trunk:
+    description: trunk of the repository
+    required: true
+    default: main
+  label-major:
+    description: label override for major changes
+    required: true
+    default: merge-major
+  label-minor:
+    description: label override for minor changes
+    required: true
+    default: merge-minor
+  label-patch:
+    description: label override for patch changes
+    required: true
+    default: merge-patch
+  label-none:
+    description: label override for none changes
+    required: true
+    default: merge-none
+  repo-token:
+    # TODO figure out precise permissions required
+    description: gh token with permissions for pullrequest.read and tag.push
+    required: true
+  repo-storage-path-overwrite:
+    description: path where the repository is stored. Defaults to name of repo
+    required: false
+runs:
+  using: docker
+  image: docker://ghcr.io/simontheleg/semver-tag-on-merge-action:v0.0.3

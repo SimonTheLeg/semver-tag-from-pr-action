@@ -16,8 +16,13 @@ COPY go.sum go.sum
 COPY main.go main.go
 
 
+# TODO cacheing does not seem to work properly. Needs to be inspected
 RUN --mount=type=cache,target=root/.cache/go-build \
-  go build -o ${outpath}
+  CGO_ENABLED=0 \
+  go build \
+  -trimpath \
+  -ldflags '-w -s' \
+  -o ${outpath}
 
 
 # Strip any symbols
