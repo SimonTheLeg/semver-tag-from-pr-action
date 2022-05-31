@@ -15,6 +15,7 @@ import (
 
 type Config struct {
 	Trunk      string
+	EventSha   string
 	Labelmap   map[string]github.SemVerBump
 	Repoclient *github.RepoClient
 	Repo       *gogit.Repository
@@ -23,9 +24,9 @@ type Config struct {
 // TODO since you can specify defaults in action.yml, this here is kind of a
 // TODO duplication, and should be removed from here
 func ConfigInsideActions() (*Config, error) {
-	trunk := githubactions.GetInput("trunk")
+	trunk := os.Getenv("GITHUB_REF_NAME")
 	if trunk == "" {
-		return nil, fmt.Errorf("input variable 'trunk' cannot be empty")
+		return nil, fmt.Errorf("could not read trunk, env variable GITHUB_REF_NAME is empty")
 	}
 
 	// since labelmap is optional, use the default values if necessary
@@ -70,17 +71,27 @@ func ConfigInsideActions() (*Config, error) {
 	tc := oauth2.NewClient(context.Background(), ts)
 	client := gh.NewClient(tc)
 
+	workspace := os.Getenv("GITHUB_WORKSPACE")
+	if workspace == "" {
+		return nil, fmt.Errorf("could not read workspace, env variable GITHUB_WORKSPACE is empty")
+	}
 	repoPath := githubactions.GetInput("repo-storage-path-overwrite")
 	if repoPath == "" {
-		repoPath = repoName
+		repoPath = workspace
 	}
+
+	eventSha := os.Getenv("GITHUB_SHA")
+	if eventSha == "" {
+		return nil, fmt.Errorf("could not read eventSha, env variable GITHUB_SHA is empty")
+	}
+
 	repo, err := gogit.PlainOpen(repoPath)
 	if err != nil {
 		return nil, err
 	}
 
 	conf := &Config{
-		Trunk:    trunk,
+		EventSha: eventSha,
 		Labelmap: lblmap,
 		Repoclient: &github.RepoClient{
 			Owner:    owner,

@@ -10,18 +10,12 @@ import (
 )
 
 func Run(conf *config.Config) error {
-	sha, err := git.GetCommitForBranch(conf.Repo, conf.Trunk)
-	if err != nil {
-		return err
-	}
-	hash := sha.Hash()
-
 	semVerTag, err := git.FindLatestSemVerTag(conf.Repo)
 	if err != nil {
 		return err
 	}
 
-	pr, err := conf.Repoclient.GetPRForCommit(context.Background(), &hash, conf.Trunk)
+	pr, err := conf.Repoclient.GetPRForCommit(context.Background(), conf.EventSha, conf.Trunk)
 	if err != nil {
 		return err
 	}
