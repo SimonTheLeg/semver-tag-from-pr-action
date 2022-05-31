@@ -34,4 +34,4 @@ outputs:
     description: the new tag after applying the semVer-bump
 runs:
   using: docker
-  image: docker://ghcr.io/simontheleg/semver-tag-on-merge-action:dev-test
+  image: docker://ghcr.io/simontheleg/semver-tag-from-pr-action:dev
