@@ -55,13 +55,15 @@ func ConfigInsideActions() (*Config, error) {
 
 	owner := os.Getenv("GITHUB_REPOSITORY_OWNER")
 	if owner == "" {
-		return nil, fmt.Errorf("could not read owner, env variable GITHUB_REPOSITORY_OWNERis empty")
+		return nil, fmt.Errorf("could not read owner, env variable GITHUB_REPOSITORY_OWNER is empty")
 	}
 	// for some reason the name of a repository is not a dedicated variable, so we need to split it out
 	repoName := strings.Split(os.Getenv("GITHUB_REPOSITORY"), "/")[1]
 	if repoName == "" {
 		return nil, fmt.Errorf("could not read repoName, env variable GITHUB_REPOSITORY is empty")
 	}
+
+	fmt.Printf("repoName is %s\n", repoName)
 
 	token := githubactions.GetInput("repo-token")
 	if token == "" {

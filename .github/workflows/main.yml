@@ -5,6 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: debug pwd
+        run: pwd
+      - name: debug ls
+        run: ls -ah
+      - name: debug branches
+        run: git branch -r --list
       - name: test action
         id: test
         uses: simontheleg/semver-tag-on-merge-action@gh-action
