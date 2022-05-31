@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/Masterminds/semver/v3"
-	gogitplumbing "github.com/go-git/go-git/v5/plumbing"
 	gh "github.com/google/go-github/v44/github"
 	ghmock "github.com/migueleliasweb/go-github-mock/src/mock"
 )
@@ -78,8 +77,7 @@ func TestGetPRForCommit2(t *testing.T) {
 				RepoName: "mock",
 			}
 
-			hash := gogitplumbing.NewHash(tc.sha)
-			pr, err := c.GetPRForCommit(context.Background(), &hash, "main")
+			pr, err := c.GetPRForCommit(context.Background(), tc.sha, "main")
 
 			if tc.expPRID != 0 {
 				if err != nil {

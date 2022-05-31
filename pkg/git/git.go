@@ -6,18 +6,6 @@ import (
 	gogitplumbing "github.com/go-git/go-git/v5/plumbing"
 )
 
-// GetCommitForBranch simply returns the Reference a branch points to. It is useful, since most of the
-// user inputs work with branchnames, rather than commits
-func GetCommitForBranch(repo *gogit.Repository, branchname string) (*gogitplumbing.Reference, error) {
-
-	ref, err := repo.Reference(gogitplumbing.NewBranchReferenceName(branchname), true)
-	if err != nil {
-		return nil, err
-	}
-
-	return ref, nil
-}
-
 type NoSemVerTag struct{}
 
 func (e *NoSemVerTag) Error() string { return "no tag matching a semVer version was found" }
