@@ -31,6 +31,11 @@ RUN strip ${outpath}
 RUN upx -q -9 ${outpath}
 
 FROM scratch
+
+# Copy over SSL certificates from the first step - this is required
+# as our code makes outbound SSL connections.
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 ARG outpath="/bin/action"
 COPY --from=builder ${outpath} ${outpath}
 
