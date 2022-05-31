@@ -22,11 +22,16 @@ inputs:
     default: merge-none
   repo-token:
     # TODO figure out precise permissions required
-    description: gh token with permissions for pullrequest.read and tag.push
+    description: gh token with permission to read pull requests from repo
     required: true
   repo-storage-path-overwrite:
-    description: path where the repository is stored. Defaults to name of repo
+    description: path where the repository is cloned. Defaults to GITHUB_WORKSPACE
     required: false
+outputs:
+  old-tag:
+    description: the old tag before applying the semVer-bump
+  new-tag:
+    description: the new tag after applying the semVer-bump
 runs:
   using: docker
   image: docker://ghcr.io/simontheleg/semver-tag-on-merge-action:dev

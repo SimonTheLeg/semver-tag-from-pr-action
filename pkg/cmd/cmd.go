@@ -7,6 +7,7 @@ import (
 	"github.com/SimonTheLeg/semver-tag-on-merge-action/pkg/config"
 	"github.com/SimonTheLeg/semver-tag-on-merge-action/pkg/git"
 	"github.com/SimonTheLeg/semver-tag-on-merge-action/pkg/github"
+	"github.com/sethvargo/go-githubactions"
 )
 
 func Run(conf *config.Config) error {
@@ -28,6 +29,9 @@ func Run(conf *config.Config) error {
 	newSemVerTag := bumpFunc(semVerTag)
 
 	fmt.Printf("Old Tag %s, new Tag %s\n", semVerTag.Original(), newSemVerTag.Original())
+
+	githubactions.SetOutput("old-tag", semVerTag.Original())
+	githubactions.SetOutput("new-tag", newSemVerTag.Original())
 
 	return nil
 }
