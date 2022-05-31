@@ -1,4 +1,4 @@
-name: SemVer Tag On Merge
+name: SemVer Tag from PR
 inputs:
   trunk:
     description: trunk of the repository

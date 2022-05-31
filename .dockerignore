@@ -1,4 +1,4 @@
 .git
 
 # ignore Go binary
-semver-tag-on-merge-action
+semver-tag-from-pr-action

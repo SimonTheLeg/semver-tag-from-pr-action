@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4
 FROM golang:1.18.2-alpine3.16 AS alpine-upx
 
-LABEL org.opencontainers.image.source https://github.com/simontheleg/semver-tag-on-merge-action
+LABEL org.opencontainers.image.source https://github.com/simontheleg/semver-tag-from-pr-action
 
 RUN apk update && apk add upx binutils
 
