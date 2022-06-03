@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/Masterminds/semver/v3"
 	gh "github.com/google/go-github/v44/github"
@@ -38,6 +39,8 @@ func (c *RepoClient) GetPRForCommit(ctx context.Context, commitSha string, trunk
 	return desiredPR, nil
 }
 
+// TODO these could directly be integrated into the switch case statement. Additionally they could be their own bumpfunc type
+
 func wrapMajor(v *semver.Version) semver.Version {
 	return v.IncMajor()
 }
@@ -63,10 +66,16 @@ const (
 	None  SemVerBump = "none"
 )
 
-type NoSemVerLabel struct{}
+type NoSemVerLabel struct {
+	labelMap map[string]SemVerBump
+}
 
-func (*NoSemVerLabel) Error() string {
-	return "no GitHub label was found which matches any of the semVer Bump labels"
+func (e *NoSemVerLabel) Error() string {
+	lbls := make([]string, 0, len(e.labelMap))
+	for key := range e.labelMap {
+		lbls = append(lbls, key)
+	}
+	return fmt.Sprintf("no GitHub label was found which matches any of the semVer Bump labels [ %s ]", strings.Join(lbls, ", "))
 }
 
 // DetermineSemVerBumpForPR returns a bumping func which can be applied to a semVer Version. It determines the suitable func
@@ -91,5 +100,5 @@ func DetermineSemVerBumpForPR(pr *gh.PullRequest, labelMap map[string]SemVerBump
 			return wrapNone, nil
 		}
 	}
-	return nil, &NoSemVerLabel{}
+	return nil, &NoSemVerLabel{labelMap}
 }
