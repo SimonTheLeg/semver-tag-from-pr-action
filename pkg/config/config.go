@@ -93,6 +93,7 @@ func ConfigInsideActions() (*Config, error) {
 	}
 
 	conf := &Config{
+		Trunk:    trunk,
 		EventSha: eventSha,
 		Labelmap: lblmap,
 		Repoclient: &github.RepoClient{
