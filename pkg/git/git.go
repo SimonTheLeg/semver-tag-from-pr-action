@@ -1,6 +1,8 @@
 package git
 
 import (
+	"fmt"
+
 	"github.com/Masterminds/semver/v3"
 	gogit "github.com/go-git/go-git/v5"
 	gogitplumbing "github.com/go-git/go-git/v5/plumbing"
@@ -42,6 +44,39 @@ func FindLatestSemVerTag(repo *gogit.Repository) (*semver.Version, error) {
 	}
 
 	return latestSemVer, nil
+}
+
+// SetAnnotatedTag sets an annotated tag in the git repository.
+// Tag cannot be empty. If msg is empty, it will be set to the value of tag
+func SetAnnotatedTag(repo *gogit.Repository, tag, msg string) error {
+	if tag == "" {
+		return fmt.Errorf("Tag cannot be empty")
+	}
+	if msg == "" {
+		msg = tag
+	}
+
+	tagExists, err := tagExists(repo, tag)
+	if err != nil {
+		return fmt.Errorf("Could not fetch tag %q: %v", tag, err)
+	}
+	if tagExists {
+		return fmt.Errorf("Tag %q already exists", tag)
+	}
+
+	h, err := repo.Head()
+	if err != nil {
+		return fmt.Errorf("Failed to get HEAD: %v", err)
+	}
+
+	_, err = repo.CreateTag(tag, h.Hash(), &gogit.CreateTagOptions{
+		Message: msg,
+	})
+	if err != nil {
+		return fmt.Errorf("Could not create tag: %v", err)
+	}
+
+	return nil
 }
 
 func tagExists(repo *gogit.Repository, tag string) (bool, error) {

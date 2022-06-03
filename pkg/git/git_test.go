@@ -68,6 +68,37 @@ func TestTagExists(t *testing.T) {
 
 }
 
+func TestSetAnnotatedTag(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integrationtest TestTagExists")
+	}
+
+	repo := getIntegrationRepoForRef(t, integrationRepoSha)
+	tag := "integration-test-tag"
+
+	t.Cleanup(func() {
+		err := repo.Storer.RemoveReference(plumbing.NewTagReferenceName(tag))
+		if err != nil {
+			t.Fatalf("Failed to clean-up after integration test: %v", err)
+		}
+	})
+
+	err := SetAnnotatedTag(repo, tag, "")
+	if err != nil {
+		t.Errorf("Expected error to be nil, but got: %v", err)
+	}
+
+	exists, err := tagExists(repo, tag)
+	if err != nil {
+		t.Fatalf("Failed to check if tag exists: %v", err)
+	}
+
+	if !exists {
+		t.Errorf("Expected tag %q to exist, but it does not", tag)
+	}
+
+}
+
 // returns the integration repo without the need to constantly clone it
 func getIntegrationRepoForRef(t *testing.T, ref string) *gogit.Repository {
 	const repostorespath = "/tmp/tag-on-merge-integration-infra"
