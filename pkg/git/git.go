@@ -43,3 +43,27 @@ func FindLatestSemVerTag(repo *gogit.Repository) (*semver.Version, error) {
 
 	return latestSemVer, nil
 }
+
+func tagExists(repo *gogit.Repository, tag string) (bool, error) {
+	// because prefixes are private in go-git, we have to recreated them https://github.com/go-git/go-git/blob/bf3471db54b0255ab5b159005069f37528a151b7/plumbing/reference.go#L11
+	tagPrefix := "refs/tags/"
+
+	tags, err := repo.Tags()
+	if err != nil {
+		return false, err
+	}
+
+	found := false
+	err = tags.ForEach(func(r *gogitplumbing.Reference) error {
+		if r.Name().String() == tagPrefix+tag {
+			found = true
+		}
+		return nil
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	return found, nil
+}
