@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/SimonTheLeg/semver-tag-on-merge-action/pkg/config"
 	"github.com/SimonTheLeg/semver-tag-on-merge-action/pkg/git"
@@ -27,11 +28,33 @@ func Run(conf *config.Config) error {
 	}
 
 	newSemVerTag := bumpFunc(semVerTag)
-
 	fmt.Printf("Old Tag %s, new Tag %s\n", semVerTag.Original(), newSemVerTag.Original())
-
 	githubactions.SetOutput("old-tag", semVerTag.Original())
 	githubactions.SetOutput("new-tag", newSemVerTag.Original())
+
+	// aka bump none was chosen
+	if semVerTag.Equal(&newSemVerTag) {
+		log.Println("Detected no bump. Skip setting and pushing new tag")
+		return nil
+	}
+
+	if !conf.ShouldSetTag {
+		log.Println("should-set-tag was set to false. Skip setting and pushing new tag")
+		return nil
+	}
+	err = git.SetAnnotatedTag(conf.Repo, newSemVerTag.Original(), "")
+	if err != nil {
+		return err
+	}
+
+	if !conf.ShouldPushTag {
+		log.Println("should-push-tag was set to false. Skip pushing new tag")
+		return nil
+	}
+	err = git.PushTag(conf.Repo, conf.RepoAuth, newSemVerTag.Original(), "")
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

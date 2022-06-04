@@ -2,10 +2,16 @@ package git
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"time"
 
 	"github.com/Masterminds/semver/v3"
 	gogit "github.com/go-git/go-git/v5"
+	gogitconfig "github.com/go-git/go-git/v5/config"
 	gogitplumbing "github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
+	gogittransport "github.com/go-git/go-git/v5/plumbing/transport"
 )
 
 type NoSemVerTag struct{}
@@ -70,12 +76,42 @@ func SetAnnotatedTag(repo *gogit.Repository, tag, msg string) error {
 	}
 
 	_, err = repo.CreateTag(tag, h.Hash(), &gogit.CreateTagOptions{
+		Tagger: &object.Signature{
+			Name:  "semver-tag-from-pr-action",
+			Email: "semver-tag-from-pr-action@githubactions.com",
+			When:  time.Now(),
+		},
 		Message: msg,
 	})
 	if err != nil {
 		return fmt.Errorf("Could not create tag: %v", err)
 	}
 
+	return nil
+}
+
+// PushTag pushes the given tag to the given remote. If remote is empty, 'origin' will be chosen
+func PushTag(repo *gogit.Repository, auth gogittransport.AuthMethod, tag string, remote string) error {
+	if remote == "" {
+		remote = "origin"
+	}
+	refspec := fmt.Sprintf("refs/tags/%s:refs/tags/%s", tag, tag)
+
+	po := &gogit.PushOptions{
+		RemoteName: remote,
+		Progress:   os.Stdout,
+		RefSpecs:   []gogitconfig.RefSpec{gogitconfig.RefSpec(refspec)},
+		Auth:       auth,
+	}
+
+	err := repo.Push(po)
+	if err != nil {
+		if err == gogit.NoErrAlreadyUpToDate {
+			log.Println("origin remote was up to date, no tag pushed")
+			return nil
+		}
+		return fmt.Errorf("failed to push tag %q to remote %q: %v", tag, remote, err)
+	}
 	return nil
 }
 

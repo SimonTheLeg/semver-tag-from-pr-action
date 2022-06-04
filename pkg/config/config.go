@@ -8,17 +8,22 @@ import (
 
 	"github.com/SimonTheLeg/semver-tag-on-merge-action/pkg/github"
 	gogit "github.com/go-git/go-git/v5"
+	gogittransport "github.com/go-git/go-git/v5/plumbing/transport"
+	gogithttp "github.com/go-git/go-git/v5/plumbing/transport/http"
 	gh "github.com/google/go-github/v44/github"
 	"github.com/sethvargo/go-githubactions"
 	"golang.org/x/oauth2"
 )
 
 type Config struct {
-	Trunk      string
-	EventSha   string
-	Labelmap   map[string]github.SemVerBump
-	Repoclient *github.RepoClient
-	Repo       *gogit.Repository
+	Trunk         string
+	EventSha      string
+	ShouldSetTag  bool
+	ShouldPushTag bool
+	Labelmap      map[string]github.SemVerBump
+	Repoclient    *github.RepoClient
+	Repo          *gogit.Repository
+	RepoAuth      gogittransport.AuthMethod
 }
 
 // TODO since you can specify defaults in action.yml, this here is kind of a
@@ -27,6 +32,16 @@ func ConfigInsideActions() (*Config, error) {
 	trunk := os.Getenv("GITHUB_REF_NAME")
 	if trunk == "" {
 		return nil, fmt.Errorf("could not read trunk, env variable GITHUB_REF_NAME is empty")
+	}
+
+	shouldSetTag := true
+	if githubactions.GetInput("should-set-tag") == "false" {
+		shouldSetTag = false
+	}
+
+	shouldPushTag := true
+	if githubactions.GetInput("should-push-tag") == "false" {
+		shouldPushTag = false
 	}
 
 	// since labelmap is optional, use the default values if necessary
@@ -90,17 +105,25 @@ func ConfigInsideActions() (*Config, error) {
 		return nil, err
 	}
 
+	repoAuth := &gogithttp.BasicAuth{
+		Username: "githubactions@email.com", // this can be anything except empty, when using with a token
+		Password: token,
+	}
+
 	conf := &Config{
-		Trunk:    trunk,
-		EventSha: eventSha,
-		Labelmap: lblmap,
+		Trunk:         trunk,
+		EventSha:      eventSha,
+		ShouldSetTag:  shouldSetTag,
+		ShouldPushTag: shouldPushTag,
+		Labelmap:      lblmap,
 		Repoclient: &github.RepoClient{
 			Owner:    owner,
 			RepoName: repoName,
 			// TODO investigate literal copy of lock values
 			Client: *client,
 		},
-		Repo: repo,
+		Repo:     repo,
+		RepoAuth: repoAuth,
 	}
 
 	return conf, nil
