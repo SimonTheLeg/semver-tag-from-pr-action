@@ -63,8 +63,6 @@ func ConfigInsideActions() (*Config, error) {
 		return nil, fmt.Errorf("could not read repoName, env variable GITHUB_REPOSITORY is empty")
 	}
 
-	fmt.Printf("repoName is %s\n", repoName)
-
 	token := githubactions.GetInput("repo-token")
 	if token == "" {
 		return nil, fmt.Errorf("input variable 'repo-token' cannot be empty")
