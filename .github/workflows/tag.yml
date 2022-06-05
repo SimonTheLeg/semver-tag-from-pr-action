@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  semver_tag_from_pr:
+    permissions:
+      contents: write
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+      - name: determine tag
+        id: determine-tag
+        uses: simontheleg/semver-tag-from-pr-action@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          label-major: merge-breaking
+          label-minor: merge-feature
+          label-patch: merge-fix
+          label-none: merge-no-new-version
+          should-set-tag: "false"
