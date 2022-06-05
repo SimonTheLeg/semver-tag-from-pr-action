@@ -24,7 +24,7 @@ func TestFindLatestSemVerTagIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expSemver, _ := semver.NewVersion("v1.1.0")
+	expSemver, _ := semver.NewVersion("v1.1.1")
 
 	if !latestSemVer.Equal(expSemver) {
 		t.Errorf("Exp semVer %q, got %q", expSemver.String(), latestSemVer.String())
