@@ -4,7 +4,7 @@ on:
       - main
 
 jobs:
-  semver_tag_from_pr:
+  new_semver_tag:
     permissions:
       contents: write
       pull-requests: read
@@ -31,6 +31,8 @@ jobs:
         run: |
           sed -i "s/${old_tag}/${new_tag}/g" action.yml
           cat action.yml
+          git config --global user.email "githubactions@email.com"
+          git config --global user.name "GitHub Actions"
           git add action.yml
           git commit -m "auto: bump docker image to ${new_tag}"
       - name: push tag
