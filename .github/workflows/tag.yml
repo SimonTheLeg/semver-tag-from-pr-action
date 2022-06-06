@@ -31,7 +31,6 @@ jobs:
           git add action.yml
           git commit -m "auto: bump docker image to ${{ steps.determine-tag.outputs.new-version }}"
       - name: push tag
-        uses: simontheleg/semver-tag-from-pr-action@v1.0.2
         run:
           git tag ${{ steps.determine-tag.outputs.new-version }} -a ${{ steps.determine-tag.outputs.new-version }}
           git push origin ${{ steps.determine-tag.outputs.new-version }}
