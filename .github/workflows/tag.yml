@@ -26,16 +26,16 @@ jobs:
           should-set-tag: "false"
       - name: update action yaml
         env:
-          old_version: ${{ steps.determine-tag.outputs.old-version }}
-          new_version: ${{ steps.determine-tag.outputs.new-version }}
+          old_tag: ${{ steps.determine-tag.outputs.old-tag }}
+          new_tag: ${{ steps.determine-tag.outputs.new-tag }}
         run: |
-          sed -i "s/${old_version}/${new_version}/g" action.yml
+          sed -i "s/${old_tag}/${new_tag}/g" action.yml
           cat action.yml
           git add action.yml
-          git commit -m "auto: bump docker image to ${new_version}"
+          git commit -m "auto: bump docker image to ${new_tag}"
       - name: push tag
         env:
-          new_version: ${{ steps.determine-tag.outputs.new-version }}
+          new_tag: ${{ steps.determine-tag.outputs.new-tag }}
         run: |
-          git tag ${new_version} -a ${new_version}
-          git push origin ${new_version}
+          git tag ${new_tag} -a ${new_tag}
+          git push origin ${new_tag}

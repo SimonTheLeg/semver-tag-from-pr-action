@@ -114,11 +114,11 @@ steps:
       repo-token: ${{ secrets.GITHUB_TOKEN }}
   - name: your step or action
     env: # or alternatively "with", if you are using an action
-      old_version: ${{ steps.determine-tag.outputs.old-version }}
-      new_version: ${{ steps.determine-tag.outputs.new-version }}
+      old_tag: ${{ steps.bump-semver.outputs.old-tag }}
+      new_tag: ${{ steps.bump-semver.outputs.new-tag }}
     run: |
-      echo old version: ${old_version}
-      echo new version: ${new_version}
+      echo old tag: ${old_tag}
+      echo new tag: ${new_tag}
 ```
 
 ## FAQ
