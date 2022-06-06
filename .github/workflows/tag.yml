@@ -39,5 +39,5 @@ jobs:
         env:
           new_tag: ${{ steps.determine-tag.outputs.new-tag }}
         run: |
-          git tag ${new_tag} -a ${new_tag}
+          git tag ${new_tag}
           git push origin ${new_tag}
