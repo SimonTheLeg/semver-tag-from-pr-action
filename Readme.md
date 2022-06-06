@@ -112,10 +112,13 @@ steps:
     uses: simontheleg/semver-tag-from-pr-action@v1
     with:
       repo-token: ${{ secrets.GITHUB_TOKEN }}
-  - name: your action
+  - name: your step or action
+    env: # or alternatively "with", if you are using an action
+      old_version: ${{ steps.determine-tag.outputs.old-version }}
+      new_version: ${{ steps.determine-tag.outputs.new-version }}
     run: |
-      echo old version: ${{ steps.bump-semver.outputs.old-version }}
-      echo new version: ${{ steps.bump-semver.outputs.new-version }}
+      echo old version: ${old_version}
+      echo new version: ${new_version}
 ```
 
 ## FAQ

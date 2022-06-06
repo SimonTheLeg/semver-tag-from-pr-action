@@ -25,12 +25,17 @@ jobs:
           label-none: merge-no-new-version
           should-set-tag: "false"
       - name: update action yaml
+        env:
+          old_version: ${{ steps.determine-tag.outputs.old-version }}
+          new_version: ${{ steps.determine-tag.outputs.new-version }}
         run: |
-          sed -i 's/${{ steps.determine-tag.outputs.old-version }}/${{ steps.determine-tag.outputs.new-version }}/g' action.yml
+          sed -i "s/${old_version}/${new_version}/g" action.yml
           cat action.yml
           git add action.yml
-          git commit -m "auto: bump docker image to ${{ steps.determine-tag.outputs.new-version }}"
+          git commit -m "auto: bump docker image to ${new_version}"
       - name: push tag
-        run:
-          git tag ${{ steps.determine-tag.outputs.new-version }} -a ${{ steps.determine-tag.outputs.new-version }}
-          git push origin ${{ steps.determine-tag.outputs.new-version }}
+        env:
+          new_version: ${{ steps.determine-tag.outputs.new-version }}
+        run: |
+          git tag ${new_version} -a ${new_version}
+          git push origin ${new_version}
