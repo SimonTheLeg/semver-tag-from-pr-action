@@ -24,21 +24,23 @@ jobs:
           label-patch: merge-fix
           label-none: merge-no-new-version
           should-set-tag: "false"
-      - name: update action yaml
-        env:
-          old_tag: ${{ steps.determine-tag.outputs.old-tag }}
-          new_tag: ${{ steps.determine-tag.outputs.new-tag }}
-        run: |
-          sed -i "s/${old_tag}/${new_tag}/g" action.yml
-          cat action.yml
-          git config --global user.email "githubactions@email.com"
-          git config --global user.name "GitHub Actions"
-          git add action.yml
-          git commit -m "auto: bump docker image to ${new_tag}"
-          git push
-      - name: push tag
-        env:
-          new_tag: ${{ steps.determine-tag.outputs.new-tag }}
-        run: |
-          git tag ${new_tag}
-          git push origin ${new_tag}
+
+      # currently out of order due to: https://github.community/t/how-to-push-to-protected-branches-in-a-github-action/16101/5?u=simontheleg
+      # - name: update action yaml
+      #   env:
+      #     old_tag: ${{ steps.determine-tag.outputs.old-tag }}
+      #     new_tag: ${{ steps.determine-tag.outputs.new-tag }}
+      #   run: |
+      #     sed -i "s/${old_tag}/${new_tag}/g" action.yml
+      #     cat action.yml
+      #     git config --global user.email "githubactions@email.com"
+      #     git config --global user.name "GitHub Actions"
+      #     git add action.yml
+      #     git commit -m "auto: bump docker image to ${new_tag}"
+      #     git push
+      # - name: push tag
+      #   env:
+      #     new_tag: ${{ steps.determine-tag.outputs.new-tag }}
+      #   run: |
+      #     git tag ${new_tag}
+      #     git push origin ${new_tag}
