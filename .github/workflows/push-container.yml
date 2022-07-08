@@ -1,0 +1,17 @@
+name: push-container
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  push_container:
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: build and push container-image
+        run: |
+          docker build . -t ghcr.io/simontheleg/semver-tag-from-pr-action:${GITHUB_REF_NAME}
+          docker push ghcr.io/simontheleg/semver-tag-from-pr-action:${GITHUB_REF_NAME}
