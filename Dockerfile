@@ -16,9 +16,8 @@ COPY go.sum go.sum
 COPY main.go main.go
 
 
-# TODO cacheing does not seem to work properly. Needs to be inspected
-RUN --mount=type=cache,target=root/.cache/go-build \
-  CGO_ENABLED=0 \
+# TODO figure out if dependencies could be cached for faster local development
+RUN CGO_ENABLED=0 \
   go build \
   -trimpath \
   -ldflags '-w -s' \
