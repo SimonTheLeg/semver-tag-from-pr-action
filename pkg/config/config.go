@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"os"
 	"strings"
@@ -115,7 +116,11 @@ func ConfigInsideActions() (*Config, error) {
 			Password: token,
 		}
 	} else {
-		repoAuth, err = gogitssh.NewPublicKeys("git", []byte(repoSSHKey), "")
+		dec, err := base64.StdEncoding.DecodeString(repoSSHKey)
+		if err != nil {
+			return nil, fmt.Errorf("Could not decode 'repo-ssh-key': %v", err)
+		}
+		repoAuth, err = gogitssh.NewPublicKeys("git", dec, "")
 		if err != nil {
 			return nil, err
 		}

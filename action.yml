@@ -25,7 +25,7 @@ inputs:
     description: gh token with permissions contents.write and pull-requests.read
     required: true
   repo-ssh-key:
-    description: ssh-key to use for pushing tags. Only needed when you want to trigger additional actions after the tag push. For detailed explanation see Readme
+    description: ssh-key to use for pushing tags, base64 encoded. Only needed when you want to trigger additional actions after the tag push. For detailed explanation see Readme
     required: true
   repo-storage-path-overwrite:
     description: path where the repository is cloned. Defaults to GITHUB_WORKSPACE
