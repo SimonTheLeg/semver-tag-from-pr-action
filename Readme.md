@@ -59,9 +59,9 @@ Per [GH Action's design](https://docs.github.com/en/actions/using-workflows/trig
 For the SemVer-action this means that additional steps need to be taken:
 
   1. You will need to [create a Deploy Key](https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys) with **write** permissions on your Repo
-  2. You will need to [create a GH Actions Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) which contains the private key for your Deploy Key **base-64 encoded**. Encoding is currently needed due to [moby/moby#12997](https://github.com/moby/moby/issues/12997). Standard encoding should be fine e.g.
+  2. You will need to [create a GH Actions Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) which contains the private key for your Deploy Key **base-64 encoded** as a **single line**. Encoding is currently needed due to [moby/moby#12997](https://github.com/moby/moby/issues/12997). Standard encoding should be fine e.g.
   ```sh
-  base64 < ~/.ssh/<your-key>
+  base64 -w0 < ~/.ssh/<your-key>
   ```
   3. Supply the key to the action:
 
@@ -81,6 +81,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: "0" # we need full git-history to determine the last semVer tag
+          ssh-key: ${{ secrets.SEMVER_TAG_SSH_KEY}} # insert the name you gave the GH secret
       - name: bump semVer
         uses: simontheleg/semver-tag-from-pr-action@v1
         with:

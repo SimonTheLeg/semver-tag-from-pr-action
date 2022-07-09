@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ ${{ secrets.SEMVER_TAG_SSH_KEY}} }}
       - name: build and push container-image
         # TODO also push to the major @v1 versions
         run: |
