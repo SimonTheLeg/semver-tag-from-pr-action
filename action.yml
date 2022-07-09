@@ -39,6 +39,24 @@ outputs:
     description: the old tag before applying the semVer-bump
   new-tag:
     description: the new tag after applying the semVer-bump
+# unfortunately I could not find a good way to ensure that the GIT_REF of the action
+# always matches the image (e.g. using @v1.1.0 would automatically use v1.1.0 image and so on)
+# Things tried:
+# - use ${{ github.action_ref }} directly inside runs.image -> context 'github' is not available in this section
+# - templating the version using the release action -> unfortunately action cannot push to protected branch
+# - using a composite action which then pulls the the image -> this allows for using github.action_ref, but you will
+#   have to map every single input into an environment variable for it to work
+# runs:
+#   using: composite
+#   steps:
+#     - name: run semver-tag-on-merge action
+#       shell: bash
+#       env:
+#         VERSION: ${{ github.action_ref }}
+#       run: docker run --env-file <(env) ghcr.io/simontheleg/semver-tag-from-pr-action:${VERSION}
+#
+# => so for now we have to settle with this not super performant alternative of re-building the image.
+# as development on this slows down, it might make sense to hardcode a tag here
 runs:
   using: docker
-  image: docker://ghcr.io/simontheleg/semver-tag-from-pr-action:${{ github.action_ref }}
+  image: Dockerfile
