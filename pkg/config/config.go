@@ -10,6 +10,7 @@ import (
 	gogit "github.com/go-git/go-git/v5"
 	gogittransport "github.com/go-git/go-git/v5/plumbing/transport"
 	gogithttp "github.com/go-git/go-git/v5/plumbing/transport/http"
+	gogitssh "github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	gh "github.com/google/go-github/v44/github"
 	"github.com/sethvargo/go-githubactions"
 	"golang.org/x/oauth2"
@@ -105,9 +106,19 @@ func ConfigInsideActions() (*Config, error) {
 		return nil, err
 	}
 
-	repoAuth := &gogithttp.BasicAuth{
-		Username: "githubactions@email.com", // this can be anything except empty, when using with a token
-		Password: token,
+	var repoAuth gogittransport.AuthMethod
+	repoSSHKey := githubactions.GetInput("repo-ssh-key")
+	if repoSSHKey == "" {
+		// use the "repo-token" as git authentication
+		repoAuth = &gogithttp.BasicAuth{
+			Username: "githubactions@email.com", // this can be anything except empty, when using with a token
+			Password: token,
+		}
+	} else {
+		repoAuth, err = gogitssh.NewPublicKeys("git", []byte(repoSSHKey), "")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	conf := &Config{

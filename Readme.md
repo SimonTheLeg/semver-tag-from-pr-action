@@ -25,7 +25,11 @@ git tag v1.0.0 # or 1.0.0 or any other valid semVer version
 git push origin v1.0.0
 ```
 
-Minimum Config
+There are two ways to setup this integration. Which one to choose depends on whether you want to trigger additional actions after the tag has been pushed.
+
+### A) I Just want to Tag, no need to trigger any follow-up action
+
+If you just want to push the tag without triggering any other action, the following config is sufficient:
 
 ```yaml
 on:
@@ -49,14 +53,58 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### B) I Want To Be Able To Trigger Other Actions After the Tagging
+
+Per [GH Action's design](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow), it is not possible for an action to trigger another action directly using `$GITHUB_TOKEN`.
+For the SemVer-action this means that additional steps need to be taken:
+
+  1. You will need to [create a Deploy Key](https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys) with **write** permissions to your Repo
+  2. You will need to [create a GH Actions Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) which contains the private key for your Deploy Key
+  3. Supply the key to the action:
+
+```yaml
+on:
+  push:
+    branches:
+      - main # can be main or any other release branch
+jobs:
+  semver_tag_from_pr:
+    # permissions required to find PR for last commit and push the new tag
+    permissions:
+      contents: write
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: "0" # we need full git-history to determine the last semVer tag
+      - name: bump semVer
+        uses: simontheleg/semver-tag-from-pr-action@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-ssh-key: ${{ secrets.SEMVER_TAG_SSH_KEY}} # insert the name you gave the secret
+```
+
+Afterwards you will be able to do something like this in another action.yml file:
+
+```yaml
+# other-action.yml
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+<<jobs in this file will be triggered whenever the action pushes a tag>>
+```
+
 ## Usage
 
 After the installation, simply label your PR with one of the following:
 
-* `merge-major` for e.g. v1.0.0 -> v2.0.0
-* `merge-minor` for e.g. v1.0.0 -> v1.1.0
-* `merge-patch` for e.g. v1.0.0 -> v1.0.1
-* `merge-none` no new semVer Tag will be created
+- `merge-major` for e.g. v1.0.0 -> v2.0.0
+- `merge-minor` for e.g. v1.0.0 -> v1.1.0
+- `merge-patch` for e.g. v1.0.0 -> v1.0.1
+- `merge-none` no new semVer Tag will be created
 
 Pro tip: The action works well with mergebots when configuring the same labels. Then whenever the label is set, the bot automatically attempts the merge and you will never forget setting the label 🙌
 
@@ -125,14 +173,14 @@ steps:
 
 **I forgot setting the label on the PR initially and I already merged it**
 
-Assuming you have not merged in any other PRs since then: You can set the label the PR afterwards and then just re-run the action.
+Assuming you have not merged in any other PRs since then: You can set the label on the PR afterwards and just re-run the action.
 
 ## Contributing
 
 ### Tests
 
 By default `go test ./...` will run both unit and integration tests. Integration tests clone the [integration-infra repo](https://github.com/SimonTheLeg/semver-tag-from-pr-integration-infra) into `/tmp` once.
-As a result, Integration tests should not be run with the `parallel` flag. 
+As a result, Integration tests should not be run with the `parallel` flag.
 
 If you only want to run unit-test, you can do so by using the `-short` flag:
 

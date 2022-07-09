@@ -1,4 +1,4 @@
-name: push-container-release
+name: release
 on:
   push:
     tags:
@@ -8,6 +8,7 @@ jobs:
   push_container:
     permissions:
       packages: write
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,3 +19,7 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
           docker build . -t ${IMAGE_NAME}:${GITHUB_REF_NAME}
           docker push ${IMAGE_NAME}:${GITHUB_REF_NAME}
+      - name: publish GH release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true

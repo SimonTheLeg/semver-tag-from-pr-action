@@ -22,6 +22,7 @@ jobs:
           label-minor: merge-feature
           label-patch: merge-fix
           label-none: merge-no-new-version
+          repo-ssh-key: ${{ secrets.SEMVER_TAG_SSH_KEY}}
 
       # currently out of order due to: https://github.community/t/how-to-push-to-protected-branches-in-a-github-action/16101/5?u=simontheleg
       # - name: update action yaml

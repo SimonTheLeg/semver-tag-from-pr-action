@@ -24,6 +24,9 @@ inputs:
   repo-token:
     description: gh token with permissions contents.write and pull-requests.read
     required: true
+  repo-ssh-key:
+    description: ssh-key to use for pushing tags. Only needed when you want to trigger additional actions after the tag push. For detailed explanation see Readme
+    required: true
   repo-storage-path-overwrite:
     description: path where the repository is cloned. Defaults to GITHUB_WORKSPACE
     required: false
@@ -63,6 +66,7 @@ runs:
         INPUT_LABEL-PATCH: ${{ inputs.label-patch }}
         INPUT_LABEL-NONE: ${{ inputs.label-none }}
         INPUT_REPO-TOKEN: ${{ inputs.repo-token }}
+        INPUT_REPO-SSH-KEY: ${{ inputs.repo-ssh-key }}
         INPUT_REPO-STORAGE-PATH-OVERWRITE: ${{ inputs.repo-storage-path-overwrite }}
         INPUT_SHOULD-SET-TAG: ${{ inputs.should-set-tag }}
         INPUT_SHOULD-PUSH-TAG: ${{ inputs.should-push-tag }}
