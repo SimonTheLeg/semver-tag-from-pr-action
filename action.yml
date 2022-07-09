@@ -1,4 +1,5 @@
 name: SemVer Tag from PR
+# Note: whenever an input is added/deleted, the runs.steps.env section needs to be updated as well!
 inputs:
   trunk:
     description: trunk of the repository
@@ -44,19 +45,34 @@ outputs:
 # Things tried:
 # - use ${{ github.action_ref }} directly inside runs.image -> context 'github' is not available in this section
 # - templating the version using the release action -> unfortunately action cannot push to protected branch
-# - using a composite action which then pulls the the image -> this allows for using github.action_ref, but you will
-#   have to map every single input into an environment variable for it to work
-# runs:
-#   using: composite
-#   steps:
-#     - name: run semver-tag-on-merge action
-#       shell: bash
-#       env:
-#         VERSION: ${{ github.action_ref }}
-#       run: docker run --env-file <(env) ghcr.io/simontheleg/semver-tag-from-pr-action:${VERSION}
+# - runs.image=Dockerfile -> the image will be rebuilt every time the action is being run, which adds roughly a minute in execution time
 #
-# => so for now we have to settle with this not super performant alternative of re-building the image.
-# as development on this slows down, it might make sense to hardcode a tag here
+# => while the current solution is far from perfect and requires a bit more care when developing, it saves roughly
+#    one minute over the Dockerfile solution, which I find is worth it
 runs:
-  using: docker
-  image: Dockerfile
+  using: composite
+  steps:
+    - name: run semver-tag-on-merge action
+      shell: bash
+      env:
+        VERSION: ${{ github.action_ref }}
+        WORKSPACE: ${{ github.workspace }}
+        INPUT_TRUNK: ${{ inputs.trunk }}
+        INPUT_LABEL-MAJOR: ${{ inputs.label-major }}
+        INPUT_LABEL-MINOR: ${{ inputs.label-minor }}
+        INPUT_LABEL-PATCH: ${{ inputs.label-patch }}
+        INPUT_LABEL-NONE: ${{ inputs.label-none }}
+        INPUT_REPO-TOKEN: ${{ inputs.repo-token }}
+        INPUT_REPO-STORAGE-PATH-OVERWRITE: ${{ inputs.repo-storage-path-overwrite }}
+        INPUT_SHOULD-SET-TAG: ${{ inputs.should-set-tag }}
+        INPUT_SHOULD-PUSH-TAG: ${{ inputs.should-push-tag }}
+      run: |
+        docker run \
+        --workdir /github/workspace \
+        -v "${WORKSPACE}":"${WORKSPACE}" \
+        -v "/var/run/docker.sock":"/var/run/docker.sock" \
+        -v "/home/runner/work/_temp/_github_home":"/github/home" \
+        -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" \
+        -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" \
+        --env-file <(env) \
+        ghcr.io/simontheleg/semver-tag-from-pr-action:${VERSION}
