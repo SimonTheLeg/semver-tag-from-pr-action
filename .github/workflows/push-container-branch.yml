@@ -1,8 +1,8 @@
-name: push-container
+name: push-container-branch
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - "**"
 
 jobs:
   push_container:
@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: build and push container-image
         run: |
+          IMAGE_NAME="ghcr.io/simontheleg/semver-tag-from-pr-action"
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-          docker build . -t ghcr.io/simontheleg/semver-tag-from-pr-action:${GITHUB_REF_NAME}
-          docker push ghcr.io/simontheleg/semver-tag-from-pr-action:${GITHUB_REF_NAME}
+          docker build . -t ${IMAGE_NAME}:branch-${GITHUB_REF_NAME}
+          docker push ${IMAGE_NAME}:branch-${GITHUB_REF_NAME}

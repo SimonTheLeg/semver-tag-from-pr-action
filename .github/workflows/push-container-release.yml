@@ -1,0 +1,20 @@
+name: push-container-release
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  push_container:
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: build and push container-image
+        # TODO also push to the major @v1 versions
+        run: |
+          IMAGE_NAME="ghcr.io/simontheleg/semver-tag-from-pr-action"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+          docker build . -t ${IMAGE_NAME}:${GITHUB_REF_NAME}
+          docker push ${IMAGE_NAME}:${GITHUB_REF_NAME}
