@@ -14,16 +14,14 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: "0"
-      - name: determine tag
-        id: determine-tag
-        uses: simontheleg/semver-tag-from-pr-action@v1.1.0
+      - name: tag
+        uses: simontheleg/semver-tag-from-pr-action@main
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           label-major: merge-breaking
           label-minor: merge-feature
           label-patch: merge-fix
           label-none: merge-no-new-version
-          should-set-tag: "false"
 
       # currently out of order due to: https://github.community/t/how-to-push-to-protected-branches-in-a-github-action/16101/5?u=simontheleg
       # - name: update action yaml
