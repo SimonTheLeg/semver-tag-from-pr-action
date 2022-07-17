@@ -71,7 +71,11 @@ runs:
         INPUT_SHOULD_SET_TAG: ${{ inputs.should_set_tag }}
         INPUT_SHOULD_PUSH_TAG: ${{ inputs.should_push_tag }}
       # we need to base64 encode the SSH_KEY due to https://github.com/moby/moby/issues/12997
+      # TODO (hack): for now I could not find a better way than manually creating the known_hosts entry for github.com
       run: |
+        mkdir -p /home/runner/work/_temp/_github_home && \
+        ssh-keyscan -t rsa github.com > /home/runner/work/_temp/_github_home/known_hosts && \
+        export SSH_KNOWN_HOSTS="/github/home/known_hosts" && \
         export INPUT_REPO_SSH_KEY=$(echo "$INPUT_REPO_SSH_KEY" | base64 -w 0) && \
         docker run \
         --workdir /github/workspace \
