@@ -74,7 +74,7 @@ runs:
       # TODO (hack): for now I could not find a better way than manually creating the known_hosts entry for github.com
       run: |
         mkdir -p /home/runner/work/_temp/_github_home && \
-        ssh-keyscan -t rsa github.com > /home/runner/work/_temp/_github_home/known_hosts && \
+        ssh-keyscan -t ed25519 github.com > /home/runner/work/_temp/_github_home/known_hosts && \
         export SSH_KNOWN_HOSTS="/github/home/known_hosts" && \
         export INPUT_REPO_SSH_KEY=$(echo "$INPUT_REPO_SSH_KEY" | base64 -w 0) && \
         docker run \
