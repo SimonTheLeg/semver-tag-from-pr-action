@@ -72,7 +72,7 @@ runs:
         INPUT_SHOULD_PUSH_TAG: ${{ inputs.should_push_tag }}
       # we need to base64 encode the SSH_KEY due to https://github.com/moby/moby/issues/12997
       run: |
-        INPUT_REPO_SSH_KEY=$(echo $INPUT_REPO_SSH_KEY | base64 -w 0) && \
+        export INPUT_REPO_SSH_KEY=$(echo $INPUT_REPO_SSH_KEY | base64 -w 0) && \
         docker run \
         --workdir /github/workspace \
         -v "${WORKSPACE}":"${WORKSPACE}" \
