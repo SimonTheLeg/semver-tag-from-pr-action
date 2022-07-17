@@ -59,11 +59,8 @@ Per [GH Action's design](https://docs.github.com/en/actions/using-workflows/trig
 For the SemVer-action this means that additional steps need to be taken:
 
   1. You will need to [create a Deploy Key](https://docs.github.com/en/developers/overview/managing-deploy-keys#deploy-keys) with **write** permissions on your Repo
-  2. You will need to [create a GH Actions Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) which contains the private key for your Deploy Key **base-64 encoded** as a **single line**. Encoding is currently needed due to [moby/moby#12997](https://github.com/moby/moby/issues/12997). Standard encoding should be fine e.g.
-  ```sh
-  base64 -w0 < ~/.ssh/<your-key>
-  ```
-  3. Supply the key to the action:
+  2. You will need to [create a GH Actions Secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) which contains the private key for your Deploy Key.
+  3. Supply the key to the semver-action as well as to the checkout-action:
 
 ```yaml
 on:
@@ -98,7 +95,7 @@ on:
     tags:
       - "v*.*.*"
 
-<<jobs in this file will be triggered whenever the action pushes a tag>>
+<<jobs in this file will be triggered whenever the semver-action pushes a tag>>
 ```
 
 ## Usage
