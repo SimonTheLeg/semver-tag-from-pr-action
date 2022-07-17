@@ -37,29 +37,29 @@ func ConfigInsideActions() (*Config, error) {
 	}
 
 	shouldSetTag := true
-	if githubactions.GetInput("should-set-tag") == "false" {
+	if githubactions.GetInput("should_set_tag") == "false" {
 		shouldSetTag = false
 	}
 
 	shouldPushTag := true
-	if githubactions.GetInput("should-push-tag") == "false" {
+	if githubactions.GetInput("should_push_tag") == "false" {
 		shouldPushTag = false
 	}
 
 	// since labelmap is optional, use the default values if necessary
-	major := githubactions.GetInput("label-major")
+	major := githubactions.GetInput("label_major")
 	if major == "" {
 		major = "merge-major"
 	}
-	minor := githubactions.GetInput("label-minor")
+	minor := githubactions.GetInput("label_minor")
 	if minor == "" {
 		minor = "merge-minor"
 	}
-	patch := githubactions.GetInput("label-patch")
+	patch := githubactions.GetInput("label_patch")
 	if patch == "" {
 		patch = "merge-patch"
 	}
-	none := githubactions.GetInput("label-none")
+	none := githubactions.GetInput("label_none")
 	if none == "" {
 		none = "merge-none"
 	}
@@ -80,9 +80,9 @@ func ConfigInsideActions() (*Config, error) {
 		return nil, fmt.Errorf("could not read repoName, env variable GITHUB_REPOSITORY is empty")
 	}
 
-	token := githubactions.GetInput("repo-token")
+	token := githubactions.GetInput("repo_token")
 	if token == "" {
-		return nil, fmt.Errorf("input variable 'repo-token' cannot be empty")
+		return nil, fmt.Errorf("input variable 'repo_token' cannot be empty")
 	}
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	tc := oauth2.NewClient(context.Background(), ts)
@@ -92,7 +92,7 @@ func ConfigInsideActions() (*Config, error) {
 	if workspace == "" {
 		return nil, fmt.Errorf("could not read workspace, env variable GITHUB_WORKSPACE is empty")
 	}
-	repoPath := githubactions.GetInput("repo-storage-path-overwrite")
+	repoPath := githubactions.GetInput("repo_storage_path_overwrite")
 	if repoPath == "" {
 		repoPath = workspace
 	}
@@ -108,9 +108,9 @@ func ConfigInsideActions() (*Config, error) {
 	}
 
 	var repoAuth gogittransport.AuthMethod
-	repoSSHKey := githubactions.GetInput("repo-ssh-key")
+	repoSSHKey := githubactions.GetInput("repo_ssh_key")
 	if repoSSHKey == "" {
-		// use the "repo-token" as git authentication
+		// use the "repo_token" as git authentication
 		repoAuth = &gogithttp.BasicAuth{
 			Username: "githubactions@email.com", // this can be anything except empty, when using with a token
 			Password: token,
@@ -118,7 +118,7 @@ func ConfigInsideActions() (*Config, error) {
 	} else {
 		dec, err := base64.StdEncoding.DecodeString(repoSSHKey)
 		if err != nil {
-			return nil, fmt.Errorf("Could not decode 'repo-ssh-key': %v", err)
+			return nil, fmt.Errorf("Could not decode 'repo_ssh_key': %v", err)
 		}
 		repoAuth, err = gogitssh.NewPublicKeys("git", dec, "")
 		if err != nil {

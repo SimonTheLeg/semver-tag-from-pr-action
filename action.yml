@@ -5,36 +5,36 @@ inputs:
     description: trunk of the repository
     required: true
     default: main
-  label-major:
+  label_major:
     description: label override for major changes
     required: true
     default: merge-major
-  label-minor:
+  label_minor:
     description: label override for minor changes
     required: true
     default: merge-minor
-  label-patch:
+  label_patch:
     description: label override for patch changes
     required: true
     default: merge-patch
-  label-none:
+  label_none:
     description: label override for none changes
     required: true
     default: merge-none
-  repo-token:
+  repo_token:
     description: gh token with permissions contents.write and pull-requests.read
     required: true
-  repo-ssh-key:
+  repo_ssh_key:
     description: ssh-key to use for pushing tags, base64 encoded. Only needed when you want to trigger additional actions after the tag push. For detailed explanation see Readme
     required: true
-  repo-storage-path-overwrite:
+  repo_storage_path_overwrite:
     description: path where the repository is cloned. Defaults to GITHUB_WORKSPACE
     required: false
-  should-set-tag:
+  should_set_tag:
     description: whether tag should be added to the cloned repo inside gh actions
     required: true
     default: "true"
-  should-push-tag:
+  should_push_tag:
     description: whether tag should be pushed to the original repo
     required: true
     default: "true"
@@ -61,18 +61,18 @@ runs:
         VERSION: ${{ github.action_ref }}
         WORKSPACE: ${{ github.workspace }}
         INPUT_TRUNK: ${{ inputs.trunk }}
-        INPUT_LABEL-MAJOR: ${{ inputs.label-major }}
-        INPUT_LABEL-MINOR: ${{ inputs.label-minor }}
-        INPUT_LABEL-PATCH: ${{ inputs.label-patch }}
-        INPUT_LABEL-NONE: ${{ inputs.label-none }}
-        INPUT_REPO-TOKEN: ${{ inputs.repo-token }}
-        INPUT_REPO-SSH-KEY: ${{ inputs.repo-ssh-key }}
-        INPUT_REPO-STORAGE-PATH-OVERWRITE: ${{ inputs.repo-storage-path-overwrite }}
-        INPUT_SHOULD-SET-TAG: ${{ inputs.should-set-tag }}
-        INPUT_SHOULD-PUSH-TAG: ${{ inputs.should-push-tag }}
+        INPUT_LABEL_MAJOR: ${{ inputs.label_major }}
+        INPUT_LABEL_MINOR: ${{ inputs.label_minor }}
+        INPUT_LABEL_PATCH: ${{ inputs.label_patch }}
+        INPUT_LABEL_NONE: ${{ inputs.label_none }}
+        INPUT_REPO_TOKEN: ${{ inputs.repo_token }}
+        INPUT_REPO_SSH_KEY: ${{ inputs.repo_ssh_key }}
+        INPUT_REPO_STORAGE_PATH_OVERWRITE: ${{ inputs.repo_storage_path_overwrite }}
+        INPUT_SHOULD_SET_TAG: ${{ inputs.should_set_tag }}
+        INPUT_SHOULD_PUSH_TAG: ${{ inputs.should_push_tag }}
       # we need to base64 encode the SSH_KEY due to https://github.com/moby/moby/issues/12997
       run: |
-        INPUT_REPO-SSH-KEY=$(echo $INPUT_REPO-SSH-KEY | base64 -w 0) \
+        INPUT_REPO_SSH_KEY=$(echo $INPUT_REPO_SSH_KEY | base64 -w 0) && \
         docker run \
         --workdir /github/workspace \
         -v "${WORKSPACE}":"${WORKSPACE}" \

@@ -18,12 +18,12 @@ jobs:
       - name: tag
         uses: simontheleg/semver-tag-from-pr-action@main
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          label-major: merge-breaking
-          label-minor: merge-feature
-          label-patch: merge-fix
-          label-none: merge-no-new-version
-          repo-ssh-key: ${{ secrets.SEMVER_TAG_SSH_KEY}}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          label_major: merge-breaking
+          label_minor: merge-feature
+          label_patch: merge-fix
+          label_none: merge-no-new-version
+          repo_ssh_key: ${{ secrets.SEMVER_TAG_SSH_KEY}}
 
       # currently out of order due to: https://github.community/t/how-to-push-to-protected-branches-in-a-github-action/16101/5?u=simontheleg
       # - name: update action yaml

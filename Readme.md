@@ -50,7 +50,7 @@ jobs:
       - name: bump semVer
         uses: simontheleg/semver-tag-from-pr-action@v1
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### B) I Want To Be Able To Trigger Other Actions After the Tagging
@@ -82,8 +82,8 @@ jobs:
       - name: bump semVer
         uses: simontheleg/semver-tag-from-pr-action@v1
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-ssh-key: ${{ secrets.SEMVER_TAG_SSH_KEY}} # insert the name you gave the GH secret
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_ssh_key: ${{ secrets.SEMVER_TAG_SSH_KEY}} # insert the name you gave the GH secret
 ```
 
 Afterwards you will be able to do something like this in another action.yml file:
@@ -125,10 +125,10 @@ You can specify your own labels, that correspond to the semVer-bumps. For exampl
 ```yaml
 ...
 with:
-  label-major: merge-breaking
-  label-minor: merge-feature
-  label-patch: merge-fix
-  label-none: merge-no-new-version
+  label_major: merge-breaking
+  label_minor: merge-feature
+  label_patch: merge-fix
+  label_none: merge-no-new-version
 ```
 
 ### Disabling Label Set and Push
@@ -140,7 +140,7 @@ By default the action will create the new semVer tag and push it into your repos
     ```yaml
     ...
     with:
-      should-set-tag: false
+      should_set_tag: false
     ```
 
 2. You can disable the push of the tag by setting:
@@ -148,7 +148,7 @@ By default the action will create the new semVer tag and push it into your repos
     ```yaml
     ...
     with:
-      should-push-tag: false
+      should_push_tag: false
     ```
 
 In both cases you can use the outputs `old-tag` and `new-tag` of this action in your own jobs:
@@ -160,7 +160,7 @@ steps:
     id: bump-semver # you need to set an id here
     uses: simontheleg/semver-tag-from-pr-action@v1
     with:
-      repo-token: ${{ secrets.GITHUB_TOKEN }}
+      repo_token: ${{ secrets.GITHUB_TOKEN }}
   - name: your step or action
     env: # or alternatively "with", if you are using an action
       old_tag: ${{ steps.bump-semver.outputs.old-tag }}

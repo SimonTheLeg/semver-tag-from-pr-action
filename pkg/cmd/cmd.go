@@ -39,7 +39,7 @@ func Run(conf *config.Config) error {
 	}
 
 	if !conf.ShouldSetTag {
-		log.Println("should-set-tag was set to false. Skip setting and pushing new tag")
+		log.Println("should_set_tag was set to false. Skip setting and pushing new tag")
 		return nil
 	}
 	err = git.SetAnnotatedTag(conf.Repo, newSemVerTag.Original(), "")
@@ -48,7 +48,7 @@ func Run(conf *config.Config) error {
 	}
 
 	if !conf.ShouldPushTag {
-		log.Println("should-push-tag was set to false. Skip pushing new tag")
+		log.Println("should_push_tag was set to false. Skip pushing new tag")
 		return nil
 	}
 	err = git.PushTag(conf.Repo, conf.RepoAuth, newSemVerTag.Original(), "")
