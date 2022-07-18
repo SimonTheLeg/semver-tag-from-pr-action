@@ -1,4 +1,5 @@
 name: SemVer Tag from PR
+description: Easily version your commits using PR labels
 # Note: whenever an input is added/deleted, the runs.steps.env section needs to be updated as well!
 inputs:
   trunk:
