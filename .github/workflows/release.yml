@@ -13,12 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: build and push container-image
-        # TODO also push to the major @v1 versions
         run: |
           IMAGE_NAME="ghcr.io/simontheleg/semver-tag-from-pr-action"
+          MAJOR_VERSION=${GITHUB_REF_NAME%%.*}
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
           docker build . -t ${IMAGE_NAME}:${GITHUB_REF_NAME}
+          docker tag ${IMAGE_NAME}:${GITHUB_REF_NAME} ${IMAGE_NAME}:${MAJOR_VERSION}
           docker push ${IMAGE_NAME}:${GITHUB_REF_NAME}
+          docker push ${IMAGE_NAME}:${MAJOR_VERSION}
       - name: publish GH release
         uses: softprops/action-gh-release@v1
         with:
