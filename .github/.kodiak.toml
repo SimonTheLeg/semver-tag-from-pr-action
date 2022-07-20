@@ -5,3 +5,6 @@ automerge_label = ["merge-breaking", "merge-feature", "merge-fix", "merge-no-new
 blocking_labels = ["wip", "hold"]
 delete_branch_on_merge = true
 method = "rebase_fast_forward"
+
+[approve]
+auto_approve_usernames = ["simontheleg", "SimonTheLeg"]
